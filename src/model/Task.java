@@ -7,7 +7,7 @@ import java.util.Objects;
 public class Task {
     protected int id;
     protected String name;
-    protected String description;  //  private final int idTask;
+    protected String description;
     protected Status status;
 
     public Task(String name, String description, Status status) {

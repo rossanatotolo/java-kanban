@@ -8,7 +8,7 @@ public class SubTask extends Task {
         this.idEpic = idEpic;
     }
 
-    public SubTask(String name, String description, Status status, int idEpic, int id) { //перезапись
+    public SubTask(int id, String name, String description, Status status, int idEpic) { //перезапись
         super(name, description, status);
         this.idEpic = idEpic;
         setId(id);

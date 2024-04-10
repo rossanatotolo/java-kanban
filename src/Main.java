@@ -42,13 +42,40 @@ public class Main {
         System.out.println("Create: " + subTask3);
         System.out.println("Create: " + epic2);
 
-        System.out.println("Status: " + taskManager.getEpics((epic1.getId()))); //проверяем актуальный статус у эпика1
+        System.out.println(); // оставила, для удобства чтения
+
+        //вношу измения в таска, затем обновляю и печатаю список
+        task1 = new Task(task1.getId(),"Приготовить ужин", "Лазанья", Status.IN_PROGRESS);
+        taskManager.update(task1);
+        task2 = new Task(task2.getId(),"Купить книгу", "Гарри Поттер", Status.DONE);
+        taskManager.update(task2);
+        System.out.println(taskManager.getAll());
+        System.out.println(); // оставила, для удобства чтения
+
+        //вношу изменения в статусы сабтасков, обновляю сабтаски и эпик
+        subTask1 = new SubTask(subTask1.getId(), "Купить волшебную палочку", "В лавке Олливандера", Status.DONE, 3);
+        subTask2 = new SubTask(subTask2.getId(), "Купить жмыра", "В магазине, расположенном в Косом переулке", Status.NEW, 3 );
+        taskManager.updateSubTasks(subTask1);
+        taskManager.updateSubTasks(subTask2);
+        taskManager.updateEpics(epic1);
+        System.out.println("Result: " + taskManager.getAllSubTask()); //печатаю список сабстасков
+        System.out.println("Status: " + epic1); //проверяю актуальный статус у эпика1
+
         taskManager.deleteSubTasks(subTask2.getId()); // удаляю сабтаску2
-        System.out.println("Status: " + taskManager.getEpics((epic1.getId()))); // еще раз проверяю
+        System.out.println("Status: " + epic1); //  проверяю поменялся ли статус у эпика1
+        System.out.println(); // оставила, для удобства чтения
+
+        //вношу изменения в статус сабтаски3, обновляю сабтаску3 и эпик2
+        subTask3 = new SubTask(subTask3.getId(), "Купить билет", "В кассе", Status.NEW, 6);
+        taskManager.updateSubTasks(subTask3);
+        taskManager.updateEpics(epic2);
+        System.out.println("Result: " + taskManager.getAllSubTask()); //печатаю список сабстасков
+        System.out.println("Status: " + epic2);
 
         taskManager.deleteEpics(epic2.getId()); // удаляем эпик2
         System.out.println("Result: " + taskManager.getEpics(epic2.getId()));  //проверяем эпик2
         System.out.println("Result: " + taskManager.getSubTasks(subTask3.getId()));  //проверяем сабтаску3
-
+        System.out.println("Result: " + taskManager.getAllSubTask()); //проверяю список всех сабтасок
+        System.out.println("Result: " + taskManager.getAllEpics()); //проверяю список всех эпиков
     }
 }
