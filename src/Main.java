@@ -41,5 +41,14 @@ public class Main {
         taskManager.createSubTasks(subTask3);
         System.out.println("Create: " + subTask3);
         System.out.println("Create: " + epic2);
+
+        System.out.println("Status: " + taskManager.getEpics((epic1.getId()))); //проверяем актуальный статус у эпика1
+        taskManager.deleteSubTasks(subTask2.getId()); // удаляю сабтаску2
+        System.out.println("Status: " + taskManager.getEpics((epic1.getId()))); // еще раз проверяю
+
+        taskManager.deleteEpics(epic2.getId()); // удаляем эпик2
+        System.out.println("Result: " + taskManager.getEpics(epic2.getId()));  //проверяем эпик2
+        System.out.println("Result: " + taskManager.getSubTasks(subTask3.getId()));  //проверяем сабтаску3
+
     }
 }

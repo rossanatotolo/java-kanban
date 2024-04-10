@@ -8,11 +8,12 @@ import model.Task;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TaskManager {
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
+    private final Map<Integer, Task> tasks = new HashMap<>(); //почитала про Мару, вроде бы достаточно только заменить тут в полях(переживала, что код сломается))
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, SubTask> subTasks = new HashMap<>();
     private int countId = 0;  // счетчик задает идентификатор, для всех задач!!
 
 
@@ -129,10 +130,10 @@ public class TaskManager {
 
        for (int idSubTask: epic.getIdSubTasks()) {
            Status status = subTasks.get(idSubTask).getStatus();
-           if (status.equals(Status.IN_PROGRESS)) {
+           if (status == Status.IN_PROGRESS) {
               epic.setStatus(Status.IN_PROGRESS);
               return;
-           } else if (status.equals(Status.NEW)) {
+           } else if (status == Status.NEW) {
                countStatusNew++;
            } else {
                countStatusDone++;;
