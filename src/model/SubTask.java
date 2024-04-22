@@ -8,10 +8,9 @@ public class SubTask extends Task {
         this.idEpic = idEpic;
     }
 
-    public SubTask(int id, String name, String description, Status status, int idEpic) { //перезапись
-        super(name, description, status);
+    public SubTask(String name, String description, Status status, int idEpic, int id) { //перезапись
+        super(name, description, status, id);
         this.idEpic = idEpic;
-        setId(id);
     }
 
     public int getIdEpic() {
@@ -21,11 +20,11 @@ public class SubTask extends Task {
     @Override
     public String toString() {
         return "SubTask{" +
-                "idEpic=" + idEpic +
-                ", id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", status=" + status +
+                ", status=" + status + '\'' +
+                ", idEpic=" + idEpic + '\'' +
+                ", id=" + id + '\'' +
                 '}';
     }
 }
