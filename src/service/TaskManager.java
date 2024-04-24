@@ -15,14 +15,12 @@ public interface TaskManager {
     void updateTask(Task task);
     void deleteTask(int id);
 
-
     List<Epic> getAllEpic();
     void clearEpic();
     Epic getEpic(int id);
     void createEpic(Epic epic);
     void updateEpic(Epic epic);
     void deleteEpic(int id);
-
 
     void createSubTask(SubTask subTask);
     List<SubTask> getAllSubTask();

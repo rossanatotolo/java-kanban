@@ -68,7 +68,7 @@ public class Main {
         System.out.println(); // оставила, для удобства чтения
 
         //вношу изменения в статус сабтаски3, обновляю сабтаску3 и эпик2
-        subTask3 = new SubTask("Купить билет", "В кассе", Status.NEW, subTask3.getId(), 6);
+        subTask3 = new SubTask("Купить билет", "В кассе", Status.NEW, 6, subTask3.getId());
         taskManager.updateSubTask(subTask3);
         taskManager.updateEpic(epic2);
         System.out.println("Result: " + taskManager.getAllSubTask()); //печатаю список сабстасков
