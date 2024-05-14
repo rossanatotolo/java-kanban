@@ -6,16 +6,19 @@ import model.SubTask;
 import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ManagersTest {
     private TaskManager taskManager;
+
     @BeforeEach
     public void addTask() {
         taskManager = Managers.getDefault();
     }
 
-    @Test //убедитесь, что утилитарный класс всегда возвращает проинициализированные и готовые к работе экземпляры менеджеров;
+    @Test
+    //убедитесь, что утилитарный класс всегда возвращает проинициализированные и готовые к работе экземпляры менеджеров;
     public void shouldClassUtilityAlwaysReturnInitializedAndGoodInstancesOfManagers() {
         assertNotNull(taskManager, "Экземляр класса не проинициализирован");
     }
@@ -42,8 +45,7 @@ class ManagersTest {
         assertEquals(task, taskManager.getTask(1), "Задачи не совпадают");
         assertEquals(epic, taskManager.getEpic(2), "Задачи не совпадают");
         assertEquals(subTask, taskManager.getSubTask(3), "Задачи не совпадают");
-        }
-
+    }
 
     @Test // проверьте, что задачи с заданным id и сгенерированным id не конфликтуют внутри менеджера;
     public void shouldTasksIdDoNotConflictInMemoryTaskManager() {
@@ -59,7 +61,6 @@ class ManagersTest {
         assertEquals(task2, task3, "Задачи не совпадают");
         assertEquals(2, taskManager.getAllTask().size(), "Количество задач не совпадает");
     }
-
 
     @Test // создайте тест, в котором проверяется неизменность задачи (по всем полям) при добавлении задачи в менеджер;
     public void shouldTasksUnchangedWhenAddingToInMemoryTaskManager() {

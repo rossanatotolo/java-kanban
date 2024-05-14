@@ -5,7 +5,6 @@ import model.Task;
 import service.InMemoryTaskManager;
 import service.Managers;
 
-
 public class Main {
 
     public static void main(String[] args) {
@@ -80,12 +79,11 @@ public class Main {
         System.out.println("Result: " + taskManager.getAllSubTask()); //проверяю список всех сабтасок
         System.out.println("Result: " + taskManager.getAllEpic()); //проверяю список всех эпиков
 
-
         Task task3 = new Task("Сдать проект", "Уложиться в дедлайн", Status.NEW);
         taskManager.createTask(task3);
         Epic epic3 = new Epic("Найти работу", "Сразу после курсов, удачи мне");
         taskManager.createEpic(epic3);
-        SubTask subTask4 = new SubTask("Закончить курсы", "В декабре", Status.NEW, 9 );
+        SubTask subTask4 = new SubTask("Закончить курсы", "В декабре", Status.NEW, 9);
         taskManager.createSubTask(subTask4);
 
         System.out.println();
@@ -100,6 +98,7 @@ public class Main {
         System.out.println(taskManager.getAllSubTask());
 
         System.out.println(taskManager.getTask(8));
+
         System.out.println(taskManager.getSubTask(10));
         System.out.println(taskManager.getEpic(9));
 
@@ -108,5 +107,46 @@ public class Main {
         System.out.println(taskManager.getHistory());
         System.out.println(Managers.getDefaultHistory().getHistory()); // проверка, должно быть пустое
 
+        //проверка
+        System.out.println("Проверка по 6ТЗ");
+
+        Task task4 = new Task("Новая задача", "Описание", Status.NEW); //создала таску и вывела историю
+        taskManager.createTask(task4);
+        System.out.println("Create: " + task4);
+        System.out.println(taskManager.getTask(11));
+        System.out.println(taskManager.getHistory());
+
+        Epic epic4 = new Epic("Новый эпик", "Описание"); //создала пустой эпик и вывела историю
+        taskManager.createEpic(epic4);
+        System.out.println("Create: " + epic4);
+        System.out.println(taskManager.getEpic(12));
+        System.out.println(taskManager.getHistory());
+        System.out.println();
+
+        //создаю 2 сабтаски эпика3 и вывожу их историю
+        SubTask subTask5 = new SubTask("Новая подзадача", "Описание", Status.NEW, 9);
+        taskManager.createSubTask(subTask5);
+        System.out.println("Create: " + subTask5);
+        System.out.println("Create: " + epic3);
+        System.out.println(taskManager.getSubTask(13));
+        System.out.println(taskManager.getHistory());
+
+        SubTask subTask6 = new SubTask("Новая подзадача2", "Описание", Status.IN_PROGRESS, 9);
+        taskManager.createSubTask(subTask6);
+        System.out.println("Create: " + subTask6);
+        System.out.println("Create: " + epic3);
+        System.out.println(taskManager.getSubTask(14));
+        System.out.println(taskManager.getHistory());
+        //убедилась, что повторов нет
+        System.out.println(taskManager.getEpic(9));
+        System.out.println(taskManager.getHistory());
+        System.out.println();
+
+        //удаляю задачу4 и проверяю историю, что не выводится
+        taskManager.deleteTask(task4.getId());
+        System.out.println(taskManager.getHistory());
+        //удалила эпик3 и убедилась, что удалился, вместе с 3 сабтасками(4, 5, 6), из истории тоже удалился
+        taskManager.deleteEpic(epic3.getId());
+        System.out.println(taskManager.getHistory());
     }
 }
