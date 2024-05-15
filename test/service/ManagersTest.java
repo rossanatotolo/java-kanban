@@ -73,4 +73,53 @@ class ManagersTest {
         assertEquals(task.getStatus(), task1.getStatus(), "Поля не совпадают");
         assertEquals(task.getId(), task1.getId(), "Поля не совпадают");
     }
+
+    @Test
+    public void shouldInMemoryAllTypesOfTasksUpdate() {
+        Task task = new Task("Новая задача", "Описание", Status.NEW);
+        taskManager.createTask(task);
+        taskManager.updateTask(task);
+        assertEquals(task, taskManager.getTask(1));
+
+        Epic epic = new Epic("Новый эпик", "Описание");
+        taskManager.createEpic(epic);
+        taskManager.updateEpic(epic);
+        assertEquals(epic, taskManager.getEpic(2));
+
+        SubTask subTask = new SubTask("Новая подзадача", "Описание", Status.NEW, 2);
+        taskManager.createSubTask(subTask);
+        taskManager.updateSubTask(subTask);
+        assertEquals(subTask, taskManager.getSubTask(3));
+    }
+
+    @Test //проверка, что добавленные задачи удаляются
+    public void shouldClearAllTasks() {
+        Task task1 = new Task("Новая задача", "Описание", Status.NEW);
+        taskManager.createTask(task1);
+        Task task2 = new Task("Новая задача", "Описание", Status.NEW);
+        taskManager.createTask(task2);
+
+        Epic epic1 = new Epic("Новый эпик", "Описание");
+        taskManager.createEpic(epic1);
+        SubTask subTask1 = new SubTask("Новая подзадача", "Описание", Status.NEW, 3);
+        taskManager.createSubTask(subTask1);
+        SubTask subTask2 = new SubTask("Новая подзадача", "Описание", Status.NEW, 3);
+        taskManager.createSubTask(subTask2);
+
+        Epic epic2 = new Epic("Новый эпик", "Описание");
+        taskManager.createEpic(epic2);
+        SubTask subTask3 = new SubTask("Новая подзадача", "Описание", Status.NEW, 6);
+        taskManager.createSubTask(subTask3);
+
+        assertEquals(2, taskManager.getAllTask().size(), "Совпадает");
+        assertEquals(3, taskManager.getAllSubTask().size(), "Совпадает");
+        assertEquals(2, taskManager.getAllEpic().size(), "Совпадает");
+
+        taskManager.clearTask();
+        taskManager.clearEpic();
+
+        assertEquals(0, taskManager.getAllTask().size(), "Задачи не найдены");
+        assertEquals(0, taskManager.getAllSubTask().size(), "Задачи не найдены");
+        assertEquals(0, taskManager.getAllEpic().size(), "Задачи не найдены");
+    }
 }

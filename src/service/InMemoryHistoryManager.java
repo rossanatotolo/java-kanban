@@ -6,18 +6,6 @@ import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private static class Node<T extends Task> {
-        public T task;
-        public Node<T> next;
-        public Node<T> prev;
-
-        public Node(T task, Node<T> next, Node<T> prev) {
-            this.task = task;
-            this.next = next;
-            this.prev = prev;
-        }
-    }
-
     private final Map<Integer, Node<Task>> historyMap = new HashMap<>();
     private Node<Task> first;
     private Node<Task> last;
@@ -27,10 +15,8 @@ public class InMemoryHistoryManager implements HistoryManager {
         // добаляет новую запись в мапу
         if (task != null) {
             int id = task.getId();
-            if (!historyMap.isEmpty()) {
-                if (historyMap.containsKey(id)) {
-                    remove(id);
-                }
+            if (!historyMap.isEmpty() && historyMap.containsKey(id)) {
+                remove(id);
             }
             historyMap.put(id, linkLast(task));
         }
@@ -85,6 +71,18 @@ public class InMemoryHistoryManager implements HistoryManager {
         } else {
             prev.next = null;
             last = node.prev;
+        }
+    }
+
+    private static class Node<T extends Task> {
+        public T task;
+        public Node<T> next;
+        public Node<T> prev;
+
+        public Node(T task, Node<T> next, Node<T> prev) {
+            this.task = task;
+            this.next = next;
+            this.prev = prev;
         }
     }
 }

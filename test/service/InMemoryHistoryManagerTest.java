@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryHistoryManagerTest {
 
@@ -36,5 +37,59 @@ class InMemoryHistoryManagerTest {
         List<Task> list = historyManager.getHistory();
 
         assertNotEquals(subTask1.getId(), list.get(1), "Дубликаты в листе");
+    }
+
+    @Test //удаление задач из начала
+    public void shouldRemoveFirst() {
+        Task task1 = new Task("Новая задача1", "Описание", Status.NEW, 1);
+        historyManager.add(task1);
+        Task task2 = new Task("Новая задача2", "Описание", Status.IN_PROGRESS, 2);
+        historyManager.add(task2);
+        Task task3 = new Task("Новая задача3", "Описание", Status.DONE, 3);
+        historyManager.add(task3);
+
+        historyManager.remove(task1.getId());
+        assertEquals(List.of(task2, task3), historyManager.getHistory(), "Проверка пройдена");
+    }
+
+    @Test //удаление задач из середины
+    public void shouldRemoveMiddle() {
+        Task task1 = new Task("Новая задача1", "Описание", Status.NEW, 1);
+        historyManager.add(task1);
+        Task task2 = new Task("Новая задача2", "Описание", Status.IN_PROGRESS, 2);
+        historyManager.add(task2);
+        Task task3 = new Task("Новая задача3", "Описание", Status.DONE, 3);
+        historyManager.add(task3);
+
+        historyManager.remove(task2.getId());
+        assertEquals(List.of(task1, task3), historyManager.getHistory(), "Проверка пройдена");
+    }
+
+    @Test //удаление задач с конца
+    public void shouldRemoveLast() {
+        Task task1 = new Task("Новая задача1", "Описание", Status.NEW, 1);
+        historyManager.add(task1);
+        Task task2 = new Task("Новая задача2", "Описание", Status.IN_PROGRESS, 2);
+        historyManager.add(task2);
+        Task task3 = new Task("Новая задача3", "Описание", Status.DONE, 3);
+        historyManager.add(task3);
+
+        historyManager.remove(task3.getId());
+        assertEquals(List.of(task1, task2), historyManager.getHistory(), "Проверка пройдена");
+    }
+
+    @Test //проверка порядка сохранения в историю
+    public void shouldBeInMemoryHistoryManagerCantHaveDuplicate() {
+        Task task1 = new Task("Новая задача1", "Описание", Status.NEW, 1);
+        historyManager.add(task1);
+        Task task2 = new Task("Новая задача2", "Описание", Status.IN_PROGRESS, 2);
+        historyManager.add(task2);
+        Task task3 = new Task("Новая задача3", "Описание", Status.DONE, 3);
+        historyManager.add(task3);
+
+        List<Task> list = historyManager.getHistory();
+
+        assertEquals(task1, list.getFirst(), "Элементы сохранены в верном порядке");
+        assertEquals(task3, list.getLast(), "Элементы сохранены в верном порядке");
     }
 }
