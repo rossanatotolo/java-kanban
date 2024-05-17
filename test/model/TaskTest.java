@@ -4,12 +4,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.Managers;
 import service.TaskManager;
+
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class TaskTest {
-private TaskManager taskManager;
+    private TaskManager taskManager;
+
     @BeforeEach
     public void addTask() {
         taskManager = Managers.getDefault();
@@ -34,4 +37,19 @@ private TaskManager taskManager;
         assertEquals(task1, tasks.get(0), "Задачи не совпадают.");
     }
 
+    @Test
+    //С помощью сеттеров экземпляры задач позволяют изменить любое своё поле, но это может повлиять на данные внутри менеджера.
+    public void shouldSettersMethodTest() {
+        Task task1 = new Task("Новая задача", "Описание", Status.NEW);
+        taskManager.createTask(task1);
+        task1.setName("testName");
+        task1.setDescription("testDescrp");
+        task1.setStatus(Status.NEW);
+        task1.setId(111);
+
+        assertEquals("testName", task1.getName(), "Изменения сохранены");
+        assertEquals("testDescrp", task1.getDescription(), "Изменения сохранены");
+        assertEquals(Status.NEW, task1.getStatus(), "Изменения сохранены");
+        assertEquals(111, task1.getId(), "Изменения сохранены");
+    }
 }

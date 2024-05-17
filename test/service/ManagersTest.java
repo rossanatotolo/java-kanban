@@ -6,16 +6,19 @@ import model.SubTask;
 import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ManagersTest {
     private TaskManager taskManager;
+
     @BeforeEach
     public void addTask() {
         taskManager = Managers.getDefault();
     }
 
-    @Test //убедитесь, что утилитарный класс всегда возвращает проинициализированные и готовые к работе экземпляры менеджеров;
+    @Test
+    //убедитесь, что утилитарный класс всегда возвращает проинициализированные и готовые к работе экземпляры менеджеров;
     public void shouldClassUtilityAlwaysReturnInitializedAndGoodInstancesOfManagers() {
         assertNotNull(taskManager, "Экземляр класса не проинициализирован");
     }
@@ -42,8 +45,7 @@ class ManagersTest {
         assertEquals(task, taskManager.getTask(1), "Задачи не совпадают");
         assertEquals(epic, taskManager.getEpic(2), "Задачи не совпадают");
         assertEquals(subTask, taskManager.getSubTask(3), "Задачи не совпадают");
-        }
-
+    }
 
     @Test // проверьте, что задачи с заданным id и сгенерированным id не конфликтуют внутри менеджера;
     public void shouldTasksIdDoNotConflictInMemoryTaskManager() {
@@ -60,7 +62,6 @@ class ManagersTest {
         assertEquals(2, taskManager.getAllTask().size(), "Количество задач не совпадает");
     }
 
-
     @Test // создайте тест, в котором проверяется неизменность задачи (по всем полям) при добавлении задачи в менеджер;
     public void shouldTasksUnchangedWhenAddingToInMemoryTaskManager() {
         Task task = new Task("Новая задача", "Описание", Status.NEW);
@@ -71,5 +72,54 @@ class ManagersTest {
         assertEquals(task.getDescription(), task1.getDescription(), "Поля не совпадают");
         assertEquals(task.getStatus(), task1.getStatus(), "Поля не совпадают");
         assertEquals(task.getId(), task1.getId(), "Поля не совпадают");
+    }
+
+    @Test
+    public void shouldInMemoryAllTypesOfTasksUpdate() {
+        Task task = new Task("Новая задача", "Описание", Status.NEW);
+        taskManager.createTask(task);
+        taskManager.updateTask(task);
+        assertEquals(task, taskManager.getTask(1));
+
+        Epic epic = new Epic("Новый эпик", "Описание");
+        taskManager.createEpic(epic);
+        taskManager.updateEpic(epic);
+        assertEquals(epic, taskManager.getEpic(2));
+
+        SubTask subTask = new SubTask("Новая подзадача", "Описание", Status.NEW, 2);
+        taskManager.createSubTask(subTask);
+        taskManager.updateSubTask(subTask);
+        assertEquals(subTask, taskManager.getSubTask(3));
+    }
+
+    @Test //проверка, что добавленные задачи удаляются
+    public void shouldClearAllTasks() {
+        Task task1 = new Task("Новая задача", "Описание", Status.NEW);
+        taskManager.createTask(task1);
+        Task task2 = new Task("Новая задача", "Описание", Status.NEW);
+        taskManager.createTask(task2);
+
+        Epic epic1 = new Epic("Новый эпик", "Описание");
+        taskManager.createEpic(epic1);
+        SubTask subTask1 = new SubTask("Новая подзадача", "Описание", Status.NEW, 3);
+        taskManager.createSubTask(subTask1);
+        SubTask subTask2 = new SubTask("Новая подзадача", "Описание", Status.NEW, 3);
+        taskManager.createSubTask(subTask2);
+
+        Epic epic2 = new Epic("Новый эпик", "Описание");
+        taskManager.createEpic(epic2);
+        SubTask subTask3 = new SubTask("Новая подзадача", "Описание", Status.NEW, 6);
+        taskManager.createSubTask(subTask3);
+
+        assertEquals(2, taskManager.getAllTask().size(), "Совпадает");
+        assertEquals(3, taskManager.getAllSubTask().size(), "Совпадает");
+        assertEquals(2, taskManager.getAllEpic().size(), "Совпадает");
+
+        taskManager.clearTask();
+        taskManager.clearEpic();
+
+        assertEquals(0, taskManager.getAllTask().size(), "Задачи не найдены");
+        assertEquals(0, taskManager.getAllSubTask().size(), "Задачи не найдены");
+        assertEquals(0, taskManager.getAllEpic().size(), "Задачи не найдены");
     }
 }
