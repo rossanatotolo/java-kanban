@@ -24,6 +24,14 @@ public class Task {
     public Task() {
     }
 
+    public TypeTask getType() {
+        return TypeTask.TASK;
+    }
+
+    public Integer getIdEpic() {
+        return null;
+    }
+
     public int getId() {
         return id;
     }

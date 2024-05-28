@@ -13,7 +13,13 @@ public class SubTask extends Task {
         this.idEpic = idEpic;
     }
 
-    public int getIdEpic() {
+    @Override
+    public TypeTask getType() {
+        return TypeTask.SUBTASK;
+    }
+
+    @Override
+    public Integer getIdEpic() {
         return idEpic;
     }
 

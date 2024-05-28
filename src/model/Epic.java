@@ -13,6 +13,20 @@ public class Epic extends Task {
         setStatus(Status.NEW);
     }
 
+    public Epic(String name, String description, Status status, int id) {
+        super(name, description, status, id);
+    }
+
+    @Override
+    public TypeTask getType() {
+        return TypeTask.EPIC;
+    }
+
+    @Override
+    public Integer getIdEpic() {
+        return super.getIdEpic();
+    }
+
     public List<Integer> getIdSubTasks() {
         return subTasks;
     }
