@@ -12,7 +12,7 @@ import java.util.List;
 
 import static model.TypeTask.*;
 
-public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
 
     public FileBackedTaskManager(File file) {
@@ -42,7 +42,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 fileWriter.write(line);
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Произошла ошибка" + e.getMessage());
+            throw new ManagerSaveException("Произошла ошибка " + e.getMessage());
         }
     }
 
@@ -59,10 +59,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
                 }
                 String line = lines[i];
                 String[] str = line.split(",");
-                if (str[1].equals(TypeTask.TASK.toString())) {
+                String type = str[1];
+                if (type.equals(TypeTask.TASK.toString())) {
                     Task task = fromString((line));
                     fileBackedTaskManager.tasks.put(task.getId(), task);
-                } else if (str[1].equals(TypeTask.EPIC.toString())) {
+                } else if (type.equals(TypeTask.EPIC.toString())) {
                     Epic epic = (Epic) fromString(line);
                     fileBackedTaskManager.epics.put(epic.getId(), epic);
                 } else {
