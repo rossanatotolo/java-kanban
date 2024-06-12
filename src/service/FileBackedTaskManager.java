@@ -10,9 +10,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static model.TypeTask.*;
 
@@ -24,10 +25,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     protected void save() { //сохраняет текущее состояние менеджера в файл. Исключения вида IOException нужно отлавливать внутри метода и выкидывать собственное непроверяемое исключение ManagerSaveException
-        List<String> allTasks = new ArrayList<>();
-        tasks.values().stream().map(this::toStringConvert).forEach(allTasks::add);
-        epics.values().stream().map(this::toStringConvert).forEach(allTasks::add);
-        subTasks.values().stream().map(this::toStringConvert).forEach(allTasks::add);
+        List<String> allTasks = Stream.of(tasks.values(), epics.values(), subTasks.values())
+                .flatMap(Collection::stream)
+                .map(this::toStringConvert)
+                .collect(Collectors.toList());
 
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8)) {
             fileWriter.write("id,type,name,description,status,epic,duration,startTime;");
@@ -86,14 +87,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         fileBackedTaskManager.countId = countId;
 
         for (Epic epic : fileBackedTaskManager.epics.values()) {
-            Optional<LocalDateTime> optional = epic.getIdSubTasks().stream()
+            epic.getIdSubTasks().stream()
                     .map(fileBackedTaskManager.subTasks::get)
                     .map(Task::getEndTime)
-                    .max(LocalDateTime::compareTo);
-            optional.ifPresentOrElse(
-                    LocalDateTime -> epic.setEndTimeEpic(optional.get()),
-                    () -> epic.setEndTimeEpic(null)
-            );
+                    .max(LocalDateTime::compareTo)
+                    .ifPresentOrElse(epic::setEndTimeEpic,
+                            () -> epic.setEndTimeEpic(null)
+                    );
         }
         return fileBackedTaskManager;
     }

@@ -101,7 +101,7 @@ class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     }
 
     @Test
-    public void shouldTimeTest() {
+    public void shouldWriteAndReadFileAndCheckingForDurationTest() {
         Task task1 = new Task("Новая задача1", "Описание", Status.NEW, Duration.ofMinutes(3), LocalDateTime.of(2024, 6, 10, 2, 0));
         taskManager.createTask(task1); //id = 1
 
