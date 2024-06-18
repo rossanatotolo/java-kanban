@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import service.Managers;
 import service.TaskManager;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,11 +24,11 @@ class SubTaskTest {
         Epic epic = new Epic("Новый эпик", "Описание");
         taskManager.createEpic(epic);
 
-        SubTask subTask1 = new SubTask("Новая подзадача", "Описание", Status.NEW, 1);
+        SubTask subTask1 = new SubTask("Новая подзадача", "Описание", Status.NEW, 1, Duration.ofMinutes(3), LocalDateTime.of(2024, 6, 10, 2, 0));
         taskManager.createSubTask(subTask1);
         final int id = subTask1.getId();
 
-        SubTask subTask2 = new SubTask("Новая подзадача2", "Описание2", Status.IN_PROGRESS, 1, id);
+        SubTask subTask2 = new SubTask("Новая подзадача2", "Описание2", Status.IN_PROGRESS, 1, id, Duration.ofMinutes(3), LocalDateTime.of(2024, 6, 10, 3, 10));
         taskManager.updateSubTask(subTask2);
 
         assertEquals(subTask1, subTask2, "Задачи не совпадают.");

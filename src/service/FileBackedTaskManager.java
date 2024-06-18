@@ -1,5 +1,6 @@
 package service;
 
+import exception.ManagerSaveException;
 import model.*;
 
 import java.io.File;
@@ -7,8 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static model.TypeTask.*;
 
@@ -20,24 +25,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     protected void save() { //сохраняет текущее состояние менеджера в файл. Исключения вида IOException нужно отлавливать внутри метода и выкидывать собственное непроверяемое исключение ManagerSaveException
-        List<String> allTasks = new ArrayList<>();
-        if (tasks.size() > 0) {
-            for (Task task : tasks.values()) {
-                allTasks.add(toString(task));
-            }
-        }
-        if (epics.size() > 0) {
-            for (Epic epic : epics.values()) {
-                allTasks.add(toString(epic));
-            }
-        }
-        if (subTasks.size() > 0) {
-            for (SubTask subTask : subTasks.values()) {
-                allTasks.add(toString(subTask));
-            }
-        }
+        List<String> allTasks = Stream.of(tasks.values(), epics.values(), subTasks.values())
+                .flatMap(Collection::stream)
+                .map(this::toStringConvert)
+                .collect(Collectors.toList());
+
         try (FileWriter fileWriter = new FileWriter(file, StandardCharsets.UTF_8)) {
-            fileWriter.write("id,type,name,description,status,epic;");
+            fileWriter.write("id,type,name,description,status,epic,duration,startTime;");
             for (String line : allTasks) {
                 fileWriter.write(line);
             }
@@ -91,12 +85,22 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
         }
         fileBackedTaskManager.countId = countId;
+
+        for (Epic epic : fileBackedTaskManager.epics.values()) {
+            epic.getIdSubTasks().stream()
+                    .map(fileBackedTaskManager.subTasks::get)
+                    .map(Task::getEndTime)
+                    .max(LocalDateTime::compareTo)
+                    .ifPresentOrElse(epic::setEndTimeEpic,
+                            () -> epic.setEndTimeEpic(null)
+                    );
+        }
         return fileBackedTaskManager;
     }
 
 
-    private static String toString(Task task) { // преобразовывает задачу в строку
-        return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "," + task.getIdEpic() + ";";
+    private String toStringConvert(Task task) { // преобразовывает задачу в строку
+        return task.getId() + "," + task.getType() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "," + task.getIdEpic() + "," + task.getDuration() + "," + task.getStartTime() + ";";
     }
 
     private static Task fromString(String value) { // преобразовывает строку в задачу
@@ -108,12 +112,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             String name = tasks[2];
             Status status = Status.valueOf(tasks[3]);
             String desc = tasks[4];
+            Duration duration = Duration.parse(tasks[6]);
+            LocalDateTime startTime = LocalDateTime.parse(tasks[7]);
             if (type == TASK) {
-                return new Task(name, desc, status, id);
+                return new Task(name, desc, status, id, duration, startTime);
             } else if (type == EPIC) {
-                return new Epic(name, desc, status, id);
+                return new Epic(name, desc, status, id, duration, startTime);
             } else if (type == SUBTASK) {
-                return new SubTask(name, desc, status, Integer.parseInt(tasks[5]), id);
+                return new SubTask(name, desc, status, Integer.parseInt(tasks[5]), id, duration, startTime);
             }
         }
         return null;
@@ -137,7 +143,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
-
     @Override
     public void updateTask(Task task) {
         super.updateTask(task);
@@ -156,7 +161,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
-
     @Override
     public void deleteTask(int id) {
         super.deleteTask(id);
@@ -174,7 +178,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super.deleteSubTask(id);
         save();
     }
-
 
     @Override
     public void clearTask() {
