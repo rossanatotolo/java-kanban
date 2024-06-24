@@ -7,6 +7,8 @@ import service.TaskManager;
 import java.io.IOException;
 import java.util.TreeSet;
 
+import static http.HttpMethod.GET;
+
 public class PrioritizedHandler extends BaseHttpHandler {
     public PrioritizedHandler(TaskManager taskManager) {
         super(taskManager);
@@ -15,15 +17,15 @@ public class PrioritizedHandler extends BaseHttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         String method = httpExchange.getRequestMethod();
-        if (method.equals("GET")) {
+        if (method.equals(GET)) {
             try {
                 TreeSet<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
-                sendText(httpExchange, gson.toJson(prioritizedTasks));
+                generalSend(httpExchange, gson.toJson(prioritizedTasks), 200);
             } catch (Exception e) {
-                sendInternalServerError(httpExchange, e.getMessage());
+                generalSend(httpExchange, e.getMessage(), 500);
             }
         } else {
-            sendNotFound(httpExchange, "Endpoint not exist");
+            generalSend(httpExchange, "Endpoint not exist", 404);
         }
     }
 }

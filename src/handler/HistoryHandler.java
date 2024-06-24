@@ -1,6 +1,7 @@
 package handler;
 
 import com.sun.net.httpserver.HttpExchange;
+import http.HttpMethod;
 import model.Task;
 import service.TaskManager;
 
@@ -16,15 +17,15 @@ public class HistoryHandler extends BaseHttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         String method = httpExchange.getRequestMethod();
-        if (method.equals("GET")) {
+        if (method.equals(HttpMethod.GET)) {
             try {
                 List<Task> history = taskManager.getHistory();
-                sendText(httpExchange, gson.toJson(history));
+                generalSend(httpExchange, gson.toJson(history), 200);
             } catch (Exception e) {
-                sendInternalServerError(httpExchange, e.getMessage());
+                generalSend(httpExchange, e.getMessage(), 500);
             }
         } else {
-            sendNotFound(httpExchange, "Endpoint not exist");
+            generalSend(httpExchange, "Endpoint not exist", 404);
         }
     }
 }

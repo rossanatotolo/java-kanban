@@ -3,6 +3,7 @@ package handler;
 import com.sun.net.httpserver.HttpExchange;
 import exception.NotFoundException;
 import exception.TimeException;
+import http.HttpMethod;
 import model.Epic;
 import service.TaskManager;
 
@@ -20,20 +21,19 @@ public class EpicHandler extends BaseHttpHandler {
         String method = httpExchange.getRequestMethod();
 
         switch (method) {
-            case "GET":
+            case HttpMethod.GET:
                 epicsGet(httpExchange);
                 break;
-            case "POST":
+            case HttpMethod.POST:
                 epicsPost(httpExchange);
                 break;
-            case "DELETE":
+            case HttpMethod.DELETE:
                 epicsDelete(httpExchange);
                 break;
             default:
-                sendNotFound(httpExchange, "Endpoint not exist");
+                generalSend(httpExchange, "Endpoint not exist", 404);
         }
     }
-
 
     private void epicsGet(HttpExchange httpExchange) throws IOException {
         String[] splitStrings = httpExchange.getRequestURI().getPath().split("/");
@@ -43,20 +43,22 @@ public class EpicHandler extends BaseHttpHandler {
         if (splitStrings.length == 2) { //get allEpic
             response = gson.toJson(taskManager.getAllEpic());
             try {
-                sendText(httpExchange, response);
+                generalSend(httpExchange, response, 200);
             } catch (Exception e) {
-                sendInternalServerError(httpExchange, e.getMessage());
+                generalSend(httpExchange, e.getMessage(), 500);
             }
         } else if (postId.isPresent()) { //get epic(id)
             try {
                 Epic epic = taskManager.getEpic(postId.get());
                 response = gson.toJson(epic);
-                sendText(httpExchange, response);
+                generalSend(httpExchange, response, 200);
+            } catch (NotFoundException e) {
+                generalSend(httpExchange, e.getMessage(), 404);
             } catch (Exception e) {
-                sendNotFound(httpExchange, e.getMessage());
+                generalSend(httpExchange, e.getMessage(), 500);
             }
         } else {
-            sendNotFound(httpExchange, "Not found");
+            generalSend(httpExchange, "Not found", 404);
         }
     }
 
@@ -69,25 +71,25 @@ public class EpicHandler extends BaseHttpHandler {
         if (splitStrings.length == 2) { //create epic
             try {
                 taskManager.createEpic(newEpic);
-                sendSuccess(httpExchange, gson.toJson(taskManager.getAllEpic()));
+                generalSend(httpExchange, gson.toJson(taskManager.getAllEpic()), 201);
             } catch (NotFoundException e) {
-                sendNotFound(httpExchange, e.getMessage());
+                generalSend(httpExchange, e.getMessage(), 404);
             } catch (Exception e) {
-                sendInternalServerError(httpExchange, e.getMessage());
+                generalSend(httpExchange, e.getMessage(), 500);
             }
         } else if (newEpic.getId() != 0 && postId.isPresent()) { //update epic
             try {
                 taskManager.updateEpic(newEpic);
-                sendSuccess(httpExchange, gson.toJson(taskManager.getEpic(postId.get())));
+                generalSend(httpExchange, gson.toJson(taskManager.getEpic(postId.get())), 201);
             } catch (TimeException e) {
-                sendHasInteractions(httpExchange, e.getMessage());
+                generalSend(httpExchange, e.getMessage(), 406);
             } catch (NotFoundException e) {
-                sendNotFound(httpExchange, e.getMessage());
+                generalSend(httpExchange, e.getMessage(), 404);
             } catch (Exception e) {
-                sendInternalServerError(httpExchange, e.getMessage());
+                generalSend(httpExchange, e.getMessage(), 500);
             }
         } else {
-            sendNotFound(httpExchange, "Not found");
+            generalSend(httpExchange, "Not found", 404);
         }
     }
 
@@ -97,14 +99,14 @@ public class EpicHandler extends BaseHttpHandler {
         if (postId.isPresent()) { //delete epic
             try {
                 taskManager.deleteEpic(postId.get());
-                sendText(httpExchange, gson.toJson(taskManager.getEpic(postId.get())));
+                generalSend(httpExchange, gson.toJson(taskManager.getEpic(postId.get())), 200);
             } catch (NotFoundException e) {
-                sendNotFound(httpExchange, e.getMessage());
+                generalSend(httpExchange, e.getMessage(), 404);
             } catch (Exception e) {
-                sendInternalServerError(httpExchange, e.getMessage());
+                generalSend(httpExchange, e.getMessage(), 500);
             }
         } else {
-            sendNotFound(httpExchange, "Not found");
+            generalSend(httpExchange, "Not found", 404);
         }
     }
 }

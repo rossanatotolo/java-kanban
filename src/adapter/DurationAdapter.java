@@ -18,7 +18,6 @@ public class DurationAdapter extends TypeAdapter<Duration> {
         jsonWriter.value(duration.toMinutes());
     }
 
-
     @Override
     public Duration read(JsonReader jsonReader) throws IOException {
         if (jsonReader.peek() == JsonToken.NULL) {
