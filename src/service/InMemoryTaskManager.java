@@ -251,18 +251,6 @@ public class InMemoryTaskManager implements TaskManager {
         return false;
     }
 
-    /*protected boolean checkTaskTime(Task task) {
-        for (Task t : getPrioritizedTasks()) {
-            if (t.getId() == task.getId()) {
-                continue;
-            }
-            if (t.getStartTime().isBefore(task.getEndTime()) && (task.getStartTime().equals(t.getStartTime())) && t.getEndTime().isAfter(task.getStartTime())) {
-                return true;
-            }
-        }
-        return false;
-    }*/
-
     public TreeSet<Task> getPrioritizedTasks() {
         tasks.values().stream()
                 .filter(Objects::nonNull)

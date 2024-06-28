@@ -1,5 +1,7 @@
 package service;
 
+import http.HttpTaskServer;
+
 public class Managers {
     private Managers() {
     }
@@ -10,5 +12,9 @@ public class Managers {
 
     public static HistoryManager getDefaultHistory() {
         return new InMemoryHistoryManager();
+    }
+
+    public static HttpTaskServer getDefaultHttp() {
+        return new HttpTaskServer((Managers.getDefault()));
     }
 }

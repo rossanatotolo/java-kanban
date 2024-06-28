@@ -116,8 +116,6 @@ public class Task {
                 ", status='" + status + '\'' +
                 ", id='" + id + '\'' + "}";
     }
-
-
 }
 
 
